@@ -5,6 +5,9 @@
 example/
 
 ### Polymer ###
+
+build/*
+
 #Installed components via bower
 bower_components/
 
