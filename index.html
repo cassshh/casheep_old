@@ -42,10 +42,10 @@
         };
 
         // Load webcomponentsjs polyfill if browser does not support native Web Components
-        (function() {
+        (function () {
             'use strict';
 
-            var onload = function() {
+            var onload = function () {
                 // For native Imports, manually fire WebComponentsReady so user code
                 // can use the same code path for native and polyfill'd imports.
                 if (!window.HTMLImports) {
@@ -74,7 +74,7 @@
 
         // Load pre-caching Service Worker
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 navigator.serviceWorker.register('/service-worker.js');
             });
         }
@@ -91,10 +91,12 @@
             background-color: #18191B;
             color: #eeeeee;
         }
+
         .noscript {
             margin: 0 auto;
             text-align: center;
         }
+
         .noscript h1, .noscript h3 {
             margin: 20px 50px 0 50px;
         }

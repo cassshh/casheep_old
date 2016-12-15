@@ -50,6 +50,7 @@
         <h1>Website coming soon...</h1>
     </template>
 
+    <script type="text/javascript" src="../js/config.js"></script>
     <script>
         Polymer({
 
@@ -63,5 +64,14 @@
             },
 
         });
+
+        (function() {
+            var m = 'font-family:monospace;color:#0D87E9';
+            var title = '%c               _  V ' + config.version_code + ' | ' + config.version_name +  '\n  ___ __ _ ___| |__   ___  ___ _ __  \n / __/ _` / __| \'_ \\ / _ \\/ _ \\ \'_ \\ \n| (_| (_| \\__ \\ | | |  __/  __/ |_) |\n \\___\\__,_|___/_| |_|\\___|\\___| .__/ \n                              |_|    \n';
+            var desc = '========================================\nYou opened the console! Know some code,\ndo you? Keep on doin\' watcha doin\' ;)\n========================================\n';
+            var message = title + desc;
+            if (window.console) console.log(message, m);
+        })();
+
     </script>
 </dom-module>
