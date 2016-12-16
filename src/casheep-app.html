@@ -59,10 +59,13 @@
             properties: {
                 prop1: {
                     type: String,
-                    value: 'casheep-app',
-                },
+                    value: 'casheep-app'
+                }
             },
 
+            created: function () {
+                this.removeAttribute('unresolved');
+            }
         });
 
         (function() {

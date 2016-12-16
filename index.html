@@ -92,6 +92,17 @@
             color: #eeeeee;
         }
 
+        casheep-app[unresolved] {
+            display: block;
+            line-height: 68px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.3em;
+            padding: 0 16px;
+            overflow: visible;
+        }
+
         .noscript {
             margin: 0 auto;
             text-align: center;
@@ -99,15 +110,18 @@
 
         .noscript h1, .noscript h3 {
             margin: 20px 50px 0 50px;
+            letter-spacing: 0.1em;
         }
-    </style>
 
+    </style>
 </head>
 <body>
-<noscript class="noscript">
-    <h1>You have JavaScript disabled :(</h1>
-    <h3>Please enable JavaScript to use this website</h3>
-</noscript>
-<casheep-app></casheep-app>
+<casheep-app unresolved>
+    CASHEEP
+    <noscript class="noscript">
+        <h1>You have JavaScript disabled :(</h1>
+        <h3>Please enable JavaScript to use this website</h3>
+    </noscript>
+</casheep-app>
 </body>
 </html>
