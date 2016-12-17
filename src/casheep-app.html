@@ -29,15 +29,19 @@
                 margin-left: 24px;
             }
 
-            [main-title] {
-                display: block;
-                line-height: 68px;
+            .logo {
                 text-align: center;
+            }
+
+            .logo a {
                 font-size: 16px;
                 font-weight: 600;
                 letter-spacing: 0.3em;
-                padding: 0 16px;
-                overflow: visible;
+                color: #fff;
+                text-decoration: none;
+                /* required for IE 11, so this <a> can receive pointer events */
+                display: inline-block;
+                pointer-events: auto;
             }
 
             paper-progress {
@@ -53,7 +57,7 @@
         <app-header>
             <app-toolbar>
                 <paper-icon-button icon="icons:favorite"></paper-icon-button>
-                <div main-title>CASHEEP</div>
+                <div class="logo" main-title><a href="/">CASHEEP</a></div>
                 <paper-icon-button icon="polymer"></paper-icon-button>
                 <paper-progress indeterminate bottom-item></paper-progress>
             </app-toolbar>
