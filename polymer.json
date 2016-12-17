@@ -6,6 +6,7 @@
   "sourceGlobs": [
     "src/**/*",
     "images/**/*",
+    "js/**/*",
     "bower.json",
     "favicon.ico",
     "android-chrome-192x192.png",
