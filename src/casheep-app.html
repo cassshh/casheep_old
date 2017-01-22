@@ -4,6 +4,9 @@
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/iron-lazy-pages/iron-lazy-pages.html">
 
 
 <dom-module id="casheep-app">
@@ -48,17 +51,47 @@
                 --paper-progress-indeterminate-cycle-duration: 3s;
             }
 
+            a paper-icon-button,
+            a:active paper-icon-button,
+            a:visited paper-icon-button {
+                color: #fff;
+            }
+
         </style>
+
+        <app-location route="{{route}}"></app-location>
+        <app-route
+                route="{{route}}"
+                pattern="/:page"
+                data="{{routeData}}"
+                tail="{{subroute}}"></app-route>
 
         <app-header>
             <app-toolbar>
-                <paper-icon-button icon="icons:favorite"></paper-icon-button>
+                <a href="/main" tabindex="-1">
+                    <paper-icon-button icon="icons:favorite"></paper-icon-button>
+                </a>
                 <div class="logo" main-title><a href="/">CASHEEP</a></div>
-                <paper-icon-button icon="polymer"></paper-icon-button>
-                <paper-progress indeterminate bottom-item></paper-progress>
+                <a href="/404">
+                    <paper-icon-button icon="polymer"></paper-icon-button>
+                </a>
+                <template is="dom-if" if="[[loading]]">
+                    <paper-progress indeterminate bottom-item></paper-progress>
+                </template>
             </app-toolbar>
         </app-header>
-        <h1>Website coming soon...</h1>
+        <iron-lazy-pages
+                attr-for-selected="data-route"
+                selected="[[page]]"
+                loading="{{loading}}"
+                hide-immediatly>
+            <template is="iron-lazy-page" data-route="404">
+                <sheep-404></sheep-404>
+            </template>
+            <template is="iron-lazy-page" data-route="main">
+                <sheep-main></sheep-main>
+            </template>
+        </iron-lazy-pages>
     </template>
 
     <script type="text/javascript" src="../js/config.js"></script>
@@ -68,24 +101,51 @@
             is: 'casheep-app',
 
             properties: {
-                prop1: {
+                page: {
                     type: String,
-                    value: 'casheep-app'
+                    reflectToAttribute: true,
+                    observer: '_pageChanged'
+                },
+                loading: {
+                    type: Boolean,
+                    notify: true
                 }
             },
 
+            observers: [
+                '_routePageChanged(routeData.page)'
+            ],
+
             created: function () {
+                var m = 'font-family:monospace;color:#0D87E9';
+                var title = '%c               _  V ' + config.version_code + ' | ' + config.version_name + '\n  ___ __ _ ___| |__   ___  ___ _ __  \n / __/ _` / __| \'_ \\ / _ \\/ _ \\ \'_ \\ \n| (_| (_| \\__ \\ | | |  __/  __/ |_) |\n \\___\\__,_|___/_| |_|\\___|\\___| .__/ \n                              |_|    \n';
+                var desc = '========================================\nYou opened the console! Know some code,\ndo you? Keep on doin\' watcha doin\' ;)\n========================================\n';
+                var message = title + desc;
+                if (window.console) console.log(message, m);
                 this.removeAttribute('unresolved');
+            },
+
+            _routePageChanged: function (page) {
+                this._log("_routePageChanged: " + page);
+                this.page = page || 'main';
+            },
+
+            _pageChanged: function (page) {
+                this._log("_pageChanged: " + page);
+                // Load page import on demand. Show 404 page if fails
+                var resolvedPageUrl = this.resolveUrl('sheep-' + page + '.html');
+                //var resolvedPageUrl = this.resolveUrl('casheep-app.html');
+                this.importHref(resolvedPageUrl, null, this._showPage404, true);
+            },
+
+            _showPage404: function () {
+                this.page = '404';
+            },
+
+            _log: function (msg) {
+                console.log(msg);
             }
         });
-
-        (function() {
-            var m = 'font-family:monospace;color:#0D87E9';
-            var title = '%c               _  V ' + config.version_code + ' | ' + config.version_name +  '\n  ___ __ _ ___| |__   ___  ___ _ __  \n / __/ _` / __| \'_ \\ / _ \\/ _ \\ \'_ \\ \n| (_| (_| \\__ \\ | | |  __/  __/ |_) |\n \\___\\__,_|___/_| |_|\\___|\\___| .__/ \n                              |_|    \n';
-            var desc = '========================================\nYou opened the console! Know some code,\ndo you? Keep on doin\' watcha doin\' ;)\n========================================\n';
-            var message = title + desc;
-            if (window.console) console.log(message, m);
-        })();
 
     </script>
 </dom-module>
