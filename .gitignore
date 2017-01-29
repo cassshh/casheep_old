@@ -1,6 +1,9 @@
 
 # Created by https://www.gitignore.io/api/polymer,intellij,bower,git,node
 
+### VSCode ###
+.vscode/launch.json
+
 ### Example ###
 example/
 
