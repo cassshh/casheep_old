@@ -2,53 +2,57 @@
 <link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
 <link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-lazy-pages/iron-lazy-pages.html">
-
-
 <dom-module id="casheep-app">
     <template>
         <style>
-            :host {
+             :host {
                 --app-primary-color: #34373c;
                 --app-secondary-color: black;
-
                 display: block;
             }
-
-            app-header, app-toolbar {
+            
+            app-header,
+            app-toolbar {
                 color: #fff;
                 background-color: var(--app-primary-color);
                 height: 46px;
             }
-
-            app-toolbar, iron-lazy-pages {
+            
+            app-toolbar,
+            iron-lazy-pages {
                 margin: 0 auto;
                 max-width: 1240px;
             }
-
+            
             app-header paper-icon-button {
                 --paper-icon-button-ink-color: white;
             }
-
+            
             .logo {
                 text-align: center;
             }
-
+            
             .logo a {
                 font-size: 16px;
                 font-weight: 600;
                 letter-spacing: 0.3em;
                 color: #fff;
+            }
+            
+            a {
+                text-transform: none;
                 text-decoration: none;
                 /* required for IE 11, so this <a> can receive pointer events */
                 display: inline-block;
                 pointer-events: auto;
             }
-
+            
             paper-progress {
                 display: block;
                 width: 100%;
@@ -56,41 +60,30 @@
                 --paper-progress-container-color: #0D87E9;
                 --paper-progress-indeterminate-cycle-duration: 3s;
             }
-
+            
             a paper-icon-button,
             a:active paper-icon-button,
             a:visited paper-icon-button {
                 color: #fff;
             }
-
         </style>
-
         <app-location route="{{route}}"></app-location>
-        <app-route
-                route="{{route}}"
-                pattern="/:page"
-                data="{{routeData}}"
-                tail="{{subroute}}"></app-route>
-
+        <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
         <app-header>
             <app-toolbar>
                 <a href="/main" tabindex="-1">
                     <paper-icon-button icon="icons:favorite"></paper-icon-button>
                 </a>
                 <div class="logo" main-title><a href="/">CASHEEP</a></div>
-                <a href="/404">
-                    <paper-icon-button icon="polymer"></paper-icon-button>
-                </a>
+                <!--<a href="/404">-->
+                <paper-icon-button icon="account-circle" on-tap="signIn"></paper-icon-button>
+                <!--</a>-->
                 <template is="dom-if" if="[[loading]]">
                     <paper-progress indeterminate bottom-item></paper-progress>
                 </template>
             </app-toolbar>
         </app-header>
-        <iron-lazy-pages
-                attr-for-selected="data-route"
-                selected="[[page]]"
-                loading="{{loading}}"
-                hide-immediatly>
+        <iron-lazy-pages attr-for-selected="data-route" selected="[[page]]" loading="{{loading}}" hide-immediatly>
             <template is="iron-lazy-page" data-route="404">
                 <sheep-404></sheep-404>
             </template>
@@ -99,7 +92,24 @@
             </template>
         </iron-lazy-pages>
     </template>
-
+    <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-auth.js"></script>
+    <!--firebase-app - The core firebase client (required).
+    firebase-auth - Firebase Authentication (optional).
+    firebase-database - The Firebase Realtime Database (optional).
+    firebase-storage - Firebase Storage (optional).
+    firebase-messaging - Firebase Cloud Messaging (optional).-->
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyDR4XSKm4feHiEsWMfrn7hkERhhosWqQXg",
+            authDomain: "casheep-develop.firebaseapp.com",
+            databaseURL: "https://casheep-develop.firebaseio.com",
+            storageBucket: "casheep-develop.appspot.com",
+            messagingSenderId: "1069480592810"
+        };
+        firebase.initializeApp(config);
+    </script>
     <script type="text/javascript" src="../js/config.js"></script>
     <script>
         Polymer({
@@ -124,11 +134,29 @@
 
             created: function () {
                 var m = 'font-family:monospace;color:#0D87E9';
-                var title = '%c               _  V ' + config.version_code + ' | ' + config.version_name + '\n  ___ __ _ ___| |__   ___  ___ _ __  \n / __/ _` / __| \'_ \\ / _ \\/ _ \\ \'_ \\ \n| (_| (_| \\__ \\ | | |  __/  __/ |_) |\n \\___\\__,_|___/_| |_|\\___|\\___| .__/ \n                              |_|    \n';
-                var desc = '========================================\nYou opened the console! Know some code,\ndo you? Keep on doin\' watcha doin\' ;)\n========================================\n';
+                var title = '%c               _  V ' + config.version_code + ' | ' + config.version_name +
+                    '\n  ___ __ _ ___| |__   ___  ___ _ __  \n / __/ _` / __| \'_ \\ / _ \\/ _ \\ \'_ \\ \n| (_| (_| \\__ \\ | | |  __/  __/ |_) |\n \\___\\__,_|___/_| |_|\\___|\\___| .__/ \n                              |_|    \n';
+                var desc =
+                    '========================================\nYou opened the console! Know some code,\ndo you? Keep on doin\' watcha doin\' ;)\n========================================\n';
                 var message = title + desc;
                 if (window.console) console.log(message, m);
                 this.removeAttribute('unresolved');
+            },
+
+            ready: function () {
+                firebase.auth().onAuthStateChanged(function (user) {
+                    if (user) {
+                        // User is signed in.
+                        this._log("signed in");
+                    } else {
+                        // No user is signed in.
+                        this._log("No user");
+                    }
+                }.bind(this));
+            },
+
+            signIn: function () {
+                this._log("Press Signin");
             },
 
             _routePageChanged: function (page) {
@@ -152,6 +180,5 @@
                 console.log(msg);
             }
         });
-
     </script>
 </dom-module>
