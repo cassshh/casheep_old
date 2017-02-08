@@ -66,6 +66,13 @@
             a:visited paper-icon-button {
                 color: #fff;
             }
+            
+            paper-icon-button.rounded {
+                --iron-icon: {
+                    border-radius: 50%;
+                    overflow: hidden;
+                }
+            }
         </style>
         <app-location route="{{route}}"></app-location>
         <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
@@ -76,7 +83,12 @@
                 </a>
                 <div class="logo" main-title><a href="/">CASHEEP</a></div>
                 <!--<a href="/404">-->
-                <paper-icon-button icon="account-circle" on-tap="signIn"></paper-icon-button>
+                <template is="dom-if" if="[[!_isLoggedIn(user)]]">
+                    <paper-icon-button icon="account-circle" on-tap="signIn"></paper-icon-button>
+                </template>
+                <template is="dom-if" if="[[_isLoggedIn(user)]]">
+                    <paper-icon-button class="rounded" src="[[user.photoURL]]" on-tap="signOut"></paper-icon-button>
+                </template>
                 <!--</a>-->
                 <template is="dom-if" if="[[loading]]">
                     <paper-progress indeterminate bottom-item></paper-progress>
@@ -125,6 +137,11 @@
                 loading: {
                     type: Boolean,
                     notify: true
+                },
+                user: {
+                    type: Object,
+                    value: null,
+                    notify: true
                 }
             },
 
@@ -148,9 +165,11 @@
                     if (user) {
                         // User is signed in.
                         this._log("signed in");
+                        this.user = user;
                     } else {
                         // No user is signed in.
                         this._log("No user");
+                        this.user = null;
                     }
                 }.bind(this));
             },
@@ -180,6 +199,20 @@
                     this._log("fireauth error: " + errorCode + " " + errorMessage + " " + email +
                         " " + credential);
                 }.bind(this));
+            },
+
+            signOut: function () {
+                firebase.auth().signOut().then(function() {
+                    //Success
+                    this._log("Logged out");
+                }.bind(this), function (error) {
+                    //Error
+                    this._log("Logout error: " + error);
+                }.bind(this));
+            },
+
+            _isLoggedIn: function (user) {
+                return user != null;
             },
 
             _routePageChanged: function (page) {
