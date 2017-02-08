@@ -5,6 +5,7 @@
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-lazy-pages/iron-lazy-pages.html">
@@ -73,12 +74,21 @@
                     overflow: hidden;
                 }
             }
+            
+            paper-toast#toast {
+                --paper-toast-background-color: #0D87E9;
+                --paper-toast-color: white;
+            }
+            paper-toast#toastError {
+                --paper-toast-background-color: #D32F2F;
+                --paper-toast-color: white;
+            }
         </style>
         <app-location route="{{route}}"></app-location>
         <app-route route="{{route}}" pattern="/:page" data="{{routeData}}" tail="{{subroute}}"></app-route>
         <app-header>
             <app-toolbar>
-                <a href="/main" tabindex="-1">
+                <a href="/" tabindex="-1">
                     <paper-icon-button icon="icons:favorite"></paper-icon-button>
                 </a>
                 <div class="logo" main-title><a href="/">CASHEEP</a></div>
@@ -90,12 +100,12 @@
                     <paper-icon-button class="rounded" src="[[user.photoURL]]" on-tap="signOut"></paper-icon-button>
                 </template>
                 <!--</a>-->
-                <template is="dom-if" if="[[loading]]">
+                <template is="dom-if" if="[[_isLoading(loadingUser, loadingPage)]]">
                     <paper-progress indeterminate bottom-item></paper-progress>
                 </template>
             </app-toolbar>
         </app-header>
-        <iron-lazy-pages attr-for-selected="data-route" selected="[[page]]" loading="{{loading}}" hide-immediatly>
+        <iron-lazy-pages attr-for-selected="data-route" selected="[[page]]" loading="{{loadingPage}}" hide-immediatly>
             <template is="iron-lazy-page" data-route="404">
                 <sheep-404></sheep-404>
             </template>
@@ -103,6 +113,8 @@
                 <sheep-main></sheep-main>
             </template>
         </iron-lazy-pages>
+        <paper-toast id="toast" always-on-top></paper-toast>
+        <paper-toast id="toastError" always-on-top></paper-toast>
     </template>
     <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-auth.js"></script>
@@ -134,8 +146,14 @@
                     reflectToAttribute: true,
                     observer: '_pageChanged'
                 },
-                loading: {
+                loadingUser: {
                     type: Boolean,
+                    value: true,
+                    notify: true
+                },
+                loadingPage: {
+                    type: Boolean,
+                    value: true,
                     notify: true
                 },
                 user: {
@@ -164,18 +182,21 @@
                 firebase.auth().onAuthStateChanged(function (user) {
                     if (user) {
                         // User is signed in.
-                        this._log("signed in");
+                        this._log("Signed in");
                         this.user = user;
+                        this._openToast(user.displayName + " succesfully logged in...");
                     } else {
                         // No user is signed in.
                         this._log("No user");
                         this.user = null;
                     }
+                    this.loadingUser = false;
                 }.bind(this));
             },
 
             signIn: function () {
                 this._log("Press Signin");
+                this.loadingUser = true;
                 var provider = new firebase.auth.GoogleAuthProvider();
                 provider.addScope('https://www.googleapis.com/auth/plus.login');
                 firebase.auth().signInWithRedirect(provider);
@@ -198,16 +219,22 @@
                     var credential = error.credential;
                     this._log("fireauth error: " + errorCode + " " + errorMessage + " " + email +
                         " " + credential);
+                    this._openToast("Something went wrong logging in... " + errorMessage, true);
+                    this.loadingUser = false;
                 }.bind(this));
             },
 
             signOut: function () {
-                firebase.auth().signOut().then(function() {
+                this.loadingUser = true;
+                firebase.auth().signOut().then(function () {
                     //Success
                     this._log("Logged out");
+                    this._openToast("Succesfully logged out...");
                 }.bind(this), function (error) {
                     //Error
                     this._log("Logout error: " + error);
+                    this._openToast("Something went wrong logging out... " + error.message, true);
+                    this.loadingUser = false;
                 }.bind(this));
             },
 
@@ -230,6 +257,27 @@
 
             _showPage404: function () {
                 this.page = '404';
+            },
+
+            _isLoading: function (...args) {
+                var loading = false;
+                for (var load in args) {
+                    if (args[load]) {
+                        loading = true;
+                        break;
+                    }
+                }
+                return loading;
+            },
+
+            _openToast: function (msg, error = false) {
+                if (error) {
+                    this.$.toastError.text = msg;
+                    this.$.toastError.open();
+                } else {
+                    this.$.toast.text = msg;
+                    this.$.toast.open();
+                }
             },
 
             _log: function (msg) {
