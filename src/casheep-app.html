@@ -79,6 +79,7 @@
                 --paper-toast-background-color: #0D87E9;
                 --paper-toast-color: white;
             }
+            
             paper-toast#toastError {
                 --paper-toast-background-color: #D32F2F;
                 --paper-toast-color: white;
@@ -100,10 +101,10 @@
                     <paper-icon-button class="rounded" src="[[user.photoURL]]" on-tap="signOut"></paper-icon-button>
                 </template>
                 <!--</a>-->
-                <template is="dom-if" if="[[_isLoading(loadingUser, loadingPage)]]">
-                    <paper-progress indeterminate bottom-item></paper-progress>
-                </template>
             </app-toolbar>
+            <template id="progess-bar" is="dom-if" if="[[_isLoading(loadingUser, loadingPage)]]">
+                <paper-progress indeterminate bottom-item></paper-progress>
+            </template>
         </app-header>
         <iron-lazy-pages attr-for-selected="data-route" selected="[[page]]" loading="{{loadingPage}}" hide-immediatly>
             <template is="iron-lazy-page" data-route="404">
