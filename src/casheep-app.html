@@ -260,7 +260,8 @@
                 this.page = '404';
             },
 
-            _isLoading: function (...args) {
+            _isLoading: function (user, page) {
+                var args = [user, page];
                 var loading = false;
                 for (var load in args) {
                     if (args[load]) {
@@ -271,7 +272,8 @@
                 return loading;
             },
 
-            _openToast: function (msg, error = false) {
+            _openToast: function (msg, error) {
+                error = typeof error === 'undefined' ? false : b;
                 if (error) {
                     this.$.toastError.text = msg;
                     this.$.toastError.open();
