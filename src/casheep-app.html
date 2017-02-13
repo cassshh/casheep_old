@@ -133,7 +133,9 @@
             storageBucket: "casheep-develop.appspot.com",
             messagingSenderId: "1069480592810"
         };
-        firebase.initializeApp(config);
+        if (typeof firebase !== 'undefined') {
+            firebase.initializeApp(config);
+        }
     </script>
     <script type="text/javascript" src="../js/config.js"></script>
     <script>
@@ -180,19 +182,23 @@
             },
 
             ready: function () {
-                firebase.auth().onAuthStateChanged(function (user) {
-                    if (user) {
-                        // User is signed in.
-                        this._log("Signed in");
-                        this.user = user;
-                        this._openToast(user.displayName + " succesfully logged in...");
-                    } else {
-                        // No user is signed in.
-                        this._log("No user");
-                        this.user = null;
-                    }
-                    this.loadingUser = false;
-                }.bind(this));
+                if (typeof firebase !== 'undefined') {
+                    firebase.auth().onAuthStateChanged(function (user) {
+                        if (user) {
+                            // User is signed in.
+                            this._log("Signed in");
+                            this.user = user;
+                            this._openToast(user.displayName + " succesfully logged in...");
+                        } else {
+                            // No user is signed in.
+                            this._log("No user");
+                            this.user = null;
+                        }
+                        this.loadingUser = false;
+                    }.bind(this));
+                } else {
+                    this._openToast("Firebase could not be loaded.. Check your internet connection ):", true);
+                }
             },
 
             signIn: function () {
@@ -273,7 +279,7 @@
             },
 
             _openToast: function (msg, error) {
-                error = typeof error === 'undefined' ? false : b;
+                error = typeof error === 'undefined' ? false : error;
                 if (error) {
                     this.$.toastError.text = msg;
                     this.$.toastError.open();

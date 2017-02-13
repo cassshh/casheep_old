@@ -1,6 +1,7 @@
 {
   "name": "casheep",
   "description": "Casheep PWA",
+  "version": "0.0.7",
   "main": "index.html",
   "authors": [
     "Cas van Dinter"
