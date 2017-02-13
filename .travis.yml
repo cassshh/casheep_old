@@ -10,10 +10,16 @@ addons:
       - google-chrome-stable
 node_js:
   - '6'
-  - '5'
-  - '4'
+  #- '5'
+  #- '4'
 before_script:
   - npm install -g bower polymer-cli
   - bower install
 script:
   - xvfb-run polymer test
+  - polymer build
+after_succes:
+  - chmod +x travis_scripts/deploy.sh
+  - ./travis_scripts/deploy.sh
+notifications:
+  email: false
