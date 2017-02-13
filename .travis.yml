@@ -25,10 +25,11 @@ install:
   - mv $(npm root -g)/lighthouse/chrome-linux .
   - $LIGHTHOUSE_CHROMIUM_PATH --version
 before_script:
-  - polymer serve build/bundled &
 script:
-  - xvfb-run polymer test
+  #- polymer test
   - polymer build
+  - polymer serve build/bundled &
+  - sleep 5
   - lighthouse http://127.0.0.1:8080/ --output=json --output-path=./validate/log.json
   - node ./validate/checklog.js ./validate/log.json
 after_success:
