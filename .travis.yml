@@ -12,12 +12,25 @@ node_js:
   - '6'
   #- '5'
   #- '4'
-before_script:
-  - npm install -g bower polymer-cli firebase-tools
+install:
+  - npm install -g bower polymer-cli firebase-tools lighthouse
   - bower install
+
+  # Install lighthouse
+  - npm install -g lighthouse local-web-server
+  - export DISPLAY=:99.0
+  - export LIGHTHOUSE_CHROMIUM_PATH="$(pwd)/chrome-linux/chrome"
+  - sh -e /etc/init.d/xvfb start
+  - npm explore -g lighthouse -- ./lighthouse-core/scripts/download-chrome.sh
+  - mv $(npm root -g)/lighthouse/chrome-linux .
+  - $LIGHTHOUSE_CHROMIUM_PATH --version
+before_script:
+  - polymer serve build/bundled &
 script:
   - xvfb-run polymer test
   - polymer build
+  - lighthouse http://127.0.0.1:8080/ --output=json --output-path=./validate/log.json
+  - node ./validate/checklog.js ./validate/log.json
 after_success:
   - chmod +x travis_scripts/deploy.sh
   - ./travis_scripts/deploy.sh
