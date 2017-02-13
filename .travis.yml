@@ -18,7 +18,7 @@ before_script:
 script:
   - xvfb-run polymer test
   - polymer build
-after_succes:
+after_success:
   - chmod +x travis_scripts/deploy.sh
   - ./travis_scripts/deploy.sh
 notifications:
