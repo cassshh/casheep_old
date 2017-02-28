@@ -9,12 +9,15 @@
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
 <link rel="import" href="../bower_components/iron-lazy-pages/iron-lazy-pages.html">
+<link rel="import" href="../bower_components/paper-menu-button/paper-menu-button.html">
 <dom-module id="casheep-app">
     <template>
         <style>
              :host {
                 --app-primary-color: #34373c;
                 --app-secondary-color: black;
+                --app-primary-color-light: #525559;
+                --app-theme-color: #0D87E9;
                 display: block;
             }
             
@@ -58,7 +61,7 @@
                 display: block;
                 width: 100%;
                 --paper-progress-active-color: rgba(255, 255, 255, 0.5);
-                --paper-progress-container-color: #0D87E9;
+                --paper-progress-container-color: var(--app-theme-color);
                 --paper-progress-indeterminate-cycle-duration: 3s;
             }
             
@@ -66,6 +69,31 @@
             a:active paper-icon-button,
             a:visited paper-icon-button {
                 color: #fff;
+            }
+            
+            paper-item {
+                width: 100px;
+                display: block;
+                padding: 4px 8px 4px 8px;
+                text-align: center;
+                cursor: pointer;
+            }
+            
+            paper-item:hover,
+            paper-item:active,
+            paper-item:focus {
+                background-color: var(--app-primary-color-light);
+            }
+            
+            paper-menu-button {
+                padding: 0;
+                --paper-menu-button-dropdown-background: var(--app-primary-color);
+            }
+            
+            .border {
+                height: 2px;
+                width: 100%;
+                background-color: var(--app-theme-color);
             }
             
             paper-icon-button.rounded {
@@ -76,7 +104,7 @@
             }
             
             paper-toast#toast {
-                --paper-toast-background-color: #0D87E9;
+                --paper-toast-background-color: var(--app-theme-color);
                 --paper-toast-color: white;
             }
             
@@ -95,10 +123,19 @@
                 <div class="logo" main-title><a href="/">CASHEEP</a></div>
                 <!--<a href="/404">-->
                 <template is="dom-if" if="[[!_isLoggedIn(user)]]">
-                    <paper-icon-button icon="account-circle" on-tap="signIn"></paper-icon-button>
+                    <paper-icon-button icon="account-circle" on-tap="signIn" disabled$="[[_isLoading(loadingUser, loadingPage)]]"></paper-icon-button>
                 </template>
                 <template is="dom-if" if="[[_isLoggedIn(user)]]">
-                    <paper-icon-button class="rounded" src="[[user.photoURL]]" on-tap="signOut"></paper-icon-button>
+                    <paper-menu-button vertical-align="top" horizontal-align="right" vertical-offset="42">
+                        <paper-icon-button class="rounded dropdown-trigger" src="[[user.photoURL]]"></paper-icon-button>
+                        <paper-menu class="dropdown-content">
+                            <div class="border"></div>
+                            <paper-item disabled>Profile</paper-item>
+                            <paper-item disabled>Settings</paper-item>
+                            <paper-item on-tap="signOut">Logout</paper-item>
+                            <div class="border"></div>
+                        </paper-menu>
+                    </paper-menu-button>
                 </template>
                 <!--</a>-->
             </app-toolbar>
@@ -133,7 +170,9 @@
             storageBucket: "casheep-develop.appspot.com",
             messagingSenderId: "1069480592810"
         };
-        firebase.initializeApp(config);
+        if (typeof firebase !== 'undefined') {
+            firebase.initializeApp(config);
+        }
     </script>
     <script type="text/javascript" src="../js/config.js"></script>
     <script>
@@ -180,19 +219,24 @@
             },
 
             ready: function () {
-                firebase.auth().onAuthStateChanged(function (user) {
-                    if (user) {
-                        // User is signed in.
-                        this._log("Signed in");
-                        this.user = user;
-                        this._openToast(user.displayName + " succesfully logged in...");
-                    } else {
-                        // No user is signed in.
-                        this._log("No user");
-                        this.user = null;
-                    }
-                    this.loadingUser = false;
-                }.bind(this));
+                if (typeof firebase !== 'undefined') {
+                    firebase.auth().onAuthStateChanged(function (user) {
+                        if (user) {
+                            // User is signed in.
+                            this._log("Signed in");
+                            this.user = user;
+                            this._openToast(user.displayName + " succesfully logged in...");
+                        } else {
+                            // No user is signed in.
+                            this._log("No user");
+                            this.user = null;
+                        }
+                        this.loadingUser = false;
+                    }.bind(this));
+                } else {
+                    this._openToast("Firebase could not be loaded.. Check your internet connection ):",
+                        true);
+                }
             },
 
             signIn: function () {
@@ -273,7 +317,7 @@
             },
 
             _openToast: function (msg, error) {
-                error = typeof error === 'undefined' ? false : b;
+                error = typeof error === 'undefined' ? false : error;
                 if (error) {
                     this.$.toastError.text = msg;
                     this.$.toastError.open();
