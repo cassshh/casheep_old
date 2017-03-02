@@ -1,0 +1,49 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="sheep-login">
+    <template>
+        <style>
+             :host {
+                display: block;
+                text-align: center;
+            }
+            
+            img.logo {
+                min-width: 180px;
+                width: 20%;
+                display: block;
+                margin: 0 auto;
+            }
+        </style>
+        <img class="logo" src="../images/manifest/casheep_logo_512.png" />
+        <paper-button on-tap="signIn" disabled$="[[_canLogin(loadingUser, user)]]">Sign in</paper-button>
+    </template>
+
+    <script>
+        Polymer({
+            is: 'sheep-login',
+
+            properties: {
+                loadingUser: {
+                    type: Boolean,
+                    notify: true
+                },
+                user: {
+                    type: Object,
+                    notify: true
+                }
+            },
+
+            _canLogin: function (loading, user) {
+                console.log(loading + " | "+  user);
+                var disabled = true;
+                if(!loading && user === null) disabled = false;
+                return disabled;
+            },
+
+            signIn: function () {
+                this.fire('signIn');
+            }
+        });
+    </script>
+</dom-module>

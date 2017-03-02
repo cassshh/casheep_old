@@ -100,6 +100,7 @@
                 --iron-icon: {
                     border-radius: 50%;
                     overflow: hidden;
+                    background-color: var(--app-theme-color);
                 }
             }
             
@@ -121,9 +122,10 @@
                     <paper-icon-button icon="icons:favorite"></paper-icon-button>
                 </a>
                 <div class="logo" main-title><a href="/">CASHEEP</a></div>
-                <!--<a href="/404">-->
                 <template is="dom-if" if="[[!_isLoggedIn(user)]]">
-                    <paper-icon-button icon="account-circle" on-tap="signIn" disabled$="[[_isLoading(loadingUser, loadingPage)]]"></paper-icon-button>
+                    <a href="/login">
+                        <paper-icon-button icon="account-circle" disabled$="[[_isLoading(loadingUser, loadingPage)]]"></paper-icon-button>
+                    </a>
                 </template>
                 <template is="dom-if" if="[[_isLoggedIn(user)]]">
                     <paper-menu-button vertical-align="top" horizontal-align="right" vertical-offset="42">
@@ -137,7 +139,6 @@
                         </paper-menu>
                     </paper-menu-button>
                 </template>
-                <!--</a>-->
             </app-toolbar>
             <template id="progess-bar" is="dom-if" if="[[_isLoading(loadingUser, loadingPage)]]">
                 <paper-progress indeterminate bottom-item></paper-progress>
@@ -149,6 +150,9 @@
             </template>
             <template is="iron-lazy-page" data-route="main">
                 <sheep-main></sheep-main>
+            </template>
+            <template is="iron-lazy-page" data-route="login">
+                <sheep-login loading-user="[[loadingUser]]" user="[[user]]"></sheep-login>
             </template>
         </iron-lazy-pages>
         <paper-toast id="toast" always-on-top></paper-toast>
@@ -226,6 +230,9 @@
                             this._log("Signed in");
                             this.user = user;
                             this._openToast(user.displayName + " succesfully logged in...");
+                            if(this.page === "login"){
+                                location = "/";
+                            }
                         } else {
                             // No user is signed in.
                             this._log("No user");
@@ -237,6 +244,7 @@
                     this._openToast("Firebase could not be loaded.. Check your internet connection ):",
                         true);
                 }
+                this.addEventListener('signIn', this.signIn);
             },
 
             signIn: function () {
