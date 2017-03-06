@@ -1,4 +1,6 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="svg-icons.html">
 
 <dom-module id="sheep-login">
     <template>
@@ -9,14 +11,92 @@
             }
             
             img.logo {
-                min-width: 180px;
-                width: 20%;
                 display: block;
                 margin: 0 auto;
+                min-width: 180px;
+                width: 20%;
+            }
+            
+            paper-card.sign-in-card {
+                --paper-card-background-color: var(--app-primary-color);
+                width: 20%;
+                max-width: 100px;
+                min-width: 50px;
+                margin: 4px;
+                padding: 10px;
+                border-bottom: 0.2em solid;
+                -o-transition: all .5s ease-out;
+                -ms-transition: all .5s ease-out;
+                -moz-transition: all .5s ease-out;
+                -webkit-transition: all .5s ease-out;
+                transition: all .5s ease-out;
+            }
+            
+            paper-card.sign-in-card:hover,
+            paper-card.sign-in-card:active,
+            paper-card.sign-in-card:focus{
+                cursor: pointer;
+                -o-transition: all .5s ease;
+                -ms-transition: all .5s ease;
+                -moz-transition: all .5s ease;
+                -webkit-transition: all .5s ease;
+                transition: all .5s ease;
+            }
+            
+            paper-card.google {
+                border-bottom-color: #db3236;
+            }
+            
+            paper-card.google:hover,
+            paper-card.google:active,
+            paper-card.google:focus {
+                background-color: #db3236;
+            }
+            
+            paper-card.github {
+                border-bottom-color: #6e5494;
+            }
+            
+            paper-card.github:hover,
+            paper-card.github:active,
+            paper-card.github:focus {
+                background-color: #6e5494;
+            }
+            
+            paper-card.twitter {
+                border-bottom-color: #1da1f2;
+            }
+            
+            paper-card.twitter:hover,
+            paper-card.twitter:active,
+            paper-card.twitter:focus {
+                background-color: #1da1f2;
+            }
+            
+            paper-card.facebook {
+                border-bottom-color: #3b5998;
+            }
+            
+            paper-card.facebook:hover,
+            paper-card.facebook:active,
+            paper-card.facebook:focus {
+                background-color: #3b5998;
             }
         </style>
         <img class="logo" src="../images/manifest/casheep_logo_512.png" />
-        <paper-button on-tap="signIn" disabled$="[[_canLogin(loadingUser, user)]]">Sign in</paper-button>
+        <h1>Sign In</h1>
+        <paper-card on-tap="signIn" data-provider="google" class="sign-in-card google">
+            <iron-icon icon="somed:google" data-provider="google"></iron-icon>
+        </paper-card>
+        <!--<paper-card on-tap="signIn" data-provider="github" class="sign-in-card github">
+            <iron-icon icon="somed:github" data-provider="github"></iron-icon>
+        </paper-card>
+        <paper-card on-tap="signIn" data-provider="twitter" class="sign-in-card twitter">
+            <iron-icon icon="somed:twitter" data-provider="twitter"></iron-icon>
+        </paper-card>
+        <paper-card on-tap="signIn" data-provider="facebook" class="sign-in-card facebook">
+            <iron-icon icon="somed:facebook" data-provider="facebook"></iron-icon>
+        </paper-card>-->
     </template>
 
     <script>
@@ -35,14 +115,15 @@
             },
 
             _canLogin: function (loading, user) {
-                console.log(loading + " | "+  user);
+                console.log(loading + " | " + user);
                 var disabled = true;
-                if(!loading && user === null) disabled = false;
+                if (!loading && user === null) disabled = false;
                 return disabled;
             },
 
-            signIn: function () {
-                this.fire('signIn');
+            signIn: function (e) {
+                var prov = e.target.getAttribute('data-provider');
+                this.fire('signIn', {provider: prov});
             }
         });
     </script>

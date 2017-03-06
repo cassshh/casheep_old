@@ -230,7 +230,7 @@
                             this._log("Signed in");
                             this.user = user;
                             this._openToast(user.displayName + " succesfully logged in...");
-                            if(this.page === "login"){
+                            if (this.page === "login") {
                                 location = "/";
                             }
                         } else {
@@ -247,11 +247,22 @@
                 this.addEventListener('signIn', this.signIn);
             },
 
-            signIn: function () {
-                this._log("Press Signin");
+            signIn: function (e, detail) {
                 this.loadingUser = true;
-                var provider = new firebase.auth.GoogleAuthProvider();
-                provider.addScope('https://www.googleapis.com/auth/plus.login');
+                var provider = null;
+                switch (e.detail.provider) {
+                    case 'google':
+                        provider = new firebase.auth.GoogleAuthProvider();
+                        provider.addScope('https://www.googleapis.com/auth/plus.login');
+                        break;
+                    case 'github':
+                    case 'twitter':
+                    case 'facebook':
+                    default:
+                        this._openToast("Something went wrong... Try again later", true);
+                        this.loadingUser = false;
+                        return;
+                }
                 firebase.auth().signInWithRedirect(provider);
                 firebase.auth().getRedirectResult().then(function (result) {
                     if (result.credential) {
