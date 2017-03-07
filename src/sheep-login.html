@@ -1,5 +1,4 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
-<link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="svg-icons.html">
 
 <dom-module id="sheep-login">
@@ -17,8 +16,7 @@
                 width: 20%;
             }
             
-            paper-card.sign-in-card {
-                --paper-card-background-color: var(--app-primary-color);
+            paper-button.sign-in-card {
                 width: 20%;
                 max-width: 100px;
                 min-width: 50px;
@@ -30,11 +28,14 @@
                 -moz-transition: all .5s ease-out;
                 -webkit-transition: all .5s ease-out;
                 transition: all .5s ease-out;
+                --paper-button: {
+                    background-color: var(--app-primary-color);
+                };
             }
             
-            paper-card.sign-in-card:hover,
-            paper-card.sign-in-card:active,
-            paper-card.sign-in-card:focus{
+            paper-button.sign-in-card:hover,
+            paper-button.sign-in-card:active,
+            paper-button.sign-in-card:focus{
                 cursor: pointer;
                 -o-transition: all .5s ease;
                 -ms-transition: all .5s ease;
@@ -43,60 +44,60 @@
                 transition: all .5s ease;
             }
             
-            paper-card.google {
+            paper-button.google {
                 border-bottom-color: #db3236;
             }
             
-            paper-card.google:hover,
-            paper-card.google:active,
-            paper-card.google:focus {
+            paper-button.google:hover,
+            paper-button.google:active,
+            paper-button.google:focus {
                 background-color: #db3236;
             }
             
-            paper-card.github {
+            paper-button.github {
                 border-bottom-color: #6e5494;
             }
             
-            paper-card.github:hover,
-            paper-card.github:active,
-            paper-card.github:focus {
+            paper-button.github:hover,
+            paper-button.github:active,
+            paper-button.github:focus {
                 background-color: #6e5494;
             }
             
-            paper-card.twitter {
+            paper-button.twitter {
                 border-bottom-color: #1da1f2;
             }
             
-            paper-card.twitter:hover,
-            paper-card.twitter:active,
-            paper-card.twitter:focus {
+            paper-button.twitter:hover,
+            paper-button.twitter:active,
+            paper-button.twitter:focus {
                 background-color: #1da1f2;
             }
             
-            paper-card.facebook {
+            paper-button.facebook {
                 border-bottom-color: #3b5998;
             }
             
-            paper-card.facebook:hover,
-            paper-card.facebook:active,
-            paper-card.facebook:focus {
+            paper-button.facebook:hover,
+            paper-button.facebook:active,
+            paper-button.facebook:focus {
                 background-color: #3b5998;
             }
         </style>
         <img class="logo" src="../images/manifest/casheep_logo_512.png" />
         <h1>Sign In</h1>
-        <paper-card on-tap="signIn" data-provider="google" class="sign-in-card google">
+        <paper-button class="sign-in-card google" data-provider="google" on-tap="signIn" disabled$="[[_canLogin(loadingUser, user)]]">
             <iron-icon icon="somed:google" data-provider="google"></iron-icon>
-        </paper-card>
-        <!--<paper-card on-tap="signIn" data-provider="github" class="sign-in-card github">
+        </paper-button>
+        <!--<paper-button class="sign-in-card github" data-provider="github" on-tap="signIn" disabled>
             <iron-icon icon="somed:github" data-provider="github"></iron-icon>
-        </paper-card>
-        <paper-card on-tap="signIn" data-provider="twitter" class="sign-in-card twitter">
+        </paper-button>
+        <paper-button class="sign-in-card twitter" data-provider="twitter" on-tap="signIn" disabled>
             <iron-icon icon="somed:twitter" data-provider="twitter"></iron-icon>
-        </paper-card>
-        <paper-card on-tap="signIn" data-provider="facebook" class="sign-in-card facebook">
+        </paper-button>
+        <paper-button class="sign-in-card facebook" data-provider="facebook" on-tap="signIn" disabled>
             <iron-icon icon="somed:facebook" data-provider="facebook"></iron-icon>
-        </paper-card>-->
+        </paper-button>-->
     </template>
 
     <script>

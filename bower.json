@@ -1,7 +1,7 @@
 {
   "name": "casheep",
   "description": "Casheep PWA",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "index.html",
   "authors": [
     "Cas van Dinter"
@@ -18,8 +18,7 @@
     "paper-button": "PolymerElements/paper-button#^1.0.14",
     "paper-toast": "PolymerElements/paper-toast#^1.3.0",
     "paper-menu-button": "PolymerElements/paper-menu-button#^1.5.2",
-    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^1.1.0",
-    "paper-card": "PolymerElements/paper-card#^1.1.4"
+    "iron-iconset-svg": "PolymerElements/iron-iconset-svg#^1.1.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
