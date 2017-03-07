@@ -160,6 +160,7 @@
     </template>
     <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-database.js"></script>
     <!--firebase-app - The core firebase client (required).
     firebase-auth - Firebase Authentication (optional).
     firebase-database - The Firebase Realtime Database (optional).
@@ -176,6 +177,7 @@
         };
         if (typeof firebase !== 'undefined') {
             firebase.initializeApp(config);
+            var database = firebase.database();
         }
     </script>
     <script type="text/javascript" src="../js/config.js"></script>
@@ -229,6 +231,16 @@
                             // User is signed in.
                             this._log("Signed in");
                             this.user = user;
+                            database.ref('users/'+user.uid).once('value', function(snapshot) {
+                                if(snapshot.val() === null) {
+                                    this._log('First time login. Adding user data');
+                                    snapshot.ref.set({
+                                        name: this.user.displayName,
+                                        email: this.user.email,
+                                        avatar: this.user.photoURL
+                                    });
+                                }
+                            }.bind(this));
                             this._openToast(user.displayName + " succesfully logged in...");
                             if (this.page === "login") {
                                 location = "/";
