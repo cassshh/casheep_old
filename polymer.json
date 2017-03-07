@@ -3,7 +3,8 @@
   "shell": "src/casheep-app.html",
   "fragments": [
     "src/sheep-404.html",
-    "src/sheep-main.html"
+    "src/sheep-main.html",
+    "src/sheep-login.html"
   ],
   "sourceGlobs": [
     "src/**/*",

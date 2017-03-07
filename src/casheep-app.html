@@ -100,6 +100,7 @@
                 --iron-icon: {
                     border-radius: 50%;
                     overflow: hidden;
+                    background-color: var(--app-theme-color);
                 }
             }
             
@@ -121,9 +122,10 @@
                     <paper-icon-button icon="icons:favorite"></paper-icon-button>
                 </a>
                 <div class="logo" main-title><a href="/">CASHEEP</a></div>
-                <!--<a href="/404">-->
                 <template is="dom-if" if="[[!_isLoggedIn(user)]]">
-                    <paper-icon-button icon="account-circle" on-tap="signIn" disabled$="[[_isLoading(loadingUser, loadingPage)]]"></paper-icon-button>
+                    <a href="/login">
+                        <paper-icon-button icon="account-circle" disabled$="[[_isLoading(loadingUser, loadingPage)]]"></paper-icon-button>
+                    </a>
                 </template>
                 <template is="dom-if" if="[[_isLoggedIn(user)]]">
                     <paper-menu-button vertical-align="top" horizontal-align="right" vertical-offset="42">
@@ -137,7 +139,6 @@
                         </paper-menu>
                     </paper-menu-button>
                 </template>
-                <!--</a>-->
             </app-toolbar>
             <template id="progess-bar" is="dom-if" if="[[_isLoading(loadingUser, loadingPage)]]">
                 <paper-progress indeterminate bottom-item></paper-progress>
@@ -150,12 +151,16 @@
             <template is="iron-lazy-page" data-route="main">
                 <sheep-main></sheep-main>
             </template>
+            <template is="iron-lazy-page" data-route="login">
+                <sheep-login loading-user="[[loadingUser]]" user="[[user]]"></sheep-login>
+            </template>
         </iron-lazy-pages>
         <paper-toast id="toast" always-on-top></paper-toast>
         <paper-toast id="toastError" always-on-top></paper-toast>
     </template>
     <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-database.js"></script>
     <!--firebase-app - The core firebase client (required).
     firebase-auth - Firebase Authentication (optional).
     firebase-database - The Firebase Realtime Database (optional).
@@ -172,6 +177,7 @@
         };
         if (typeof firebase !== 'undefined') {
             firebase.initializeApp(config);
+            var database = firebase.database();
         }
     </script>
     <script type="text/javascript" src="../js/config.js"></script>
@@ -225,7 +231,20 @@
                             // User is signed in.
                             this._log("Signed in");
                             this.user = user;
+                            database.ref('users/'+user.uid).once('value', function(snapshot) {
+                                if(snapshot.val() === null) {
+                                    this._log('First time login. Adding user data');
+                                    snapshot.ref.set({
+                                        name: this.user.displayName,
+                                        email: this.user.email,
+                                        avatar: this.user.photoURL
+                                    });
+                                }
+                            }.bind(this));
                             this._openToast(user.displayName + " succesfully logged in...");
+                            if (this.page === "login") {
+                                location = "/";
+                            }
                         } else {
                             // No user is signed in.
                             this._log("No user");
@@ -237,13 +256,25 @@
                     this._openToast("Firebase could not be loaded.. Check your internet connection ):",
                         true);
                 }
+                this.addEventListener('signIn', this.signIn);
             },
 
-            signIn: function () {
-                this._log("Press Signin");
+            signIn: function (e, detail) {
                 this.loadingUser = true;
-                var provider = new firebase.auth.GoogleAuthProvider();
-                provider.addScope('https://www.googleapis.com/auth/plus.login');
+                var provider = null;
+                switch (e.detail.provider) {
+                    case 'google':
+                        provider = new firebase.auth.GoogleAuthProvider();
+                        provider.addScope('https://www.googleapis.com/auth/plus.login');
+                        break;
+                    case 'github':
+                    case 'twitter':
+                    case 'facebook':
+                    default:
+                        this._openToast("Something went wrong... Try again later", true);
+                        this.loadingUser = false;
+                        return;
+                }
                 firebase.auth().signInWithRedirect(provider);
                 firebase.auth().getRedirectResult().then(function (result) {
                     if (result.credential) {
