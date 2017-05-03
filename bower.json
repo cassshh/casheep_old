@@ -1,6 +1,9 @@
 {
   "name": "casheep",
   "description": "Casheep Progressive Web App",
+  "authors": [
+    "Cas van Dinter"
+  ],
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0-rc.3"
@@ -8,5 +11,6 @@
   "devDependencies": {
     "web-component-tester": "^6.0.0-prerelease.5",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0-rc.7"
-  }
+  },
+  "private": true
 }
