@@ -149,7 +149,7 @@
                 <sheep-404></sheep-404>
             </template>
             <template is="iron-lazy-page" data-route="main">
-                <sheep-main></sheep-main>
+                <sheep-main user="[[user]]"></sheep-main>
             </template>
             <template is="iron-lazy-page" data-route="login">
                 <sheep-login loading-user="[[loadingUser]]" user="[[user]]"></sheep-login>
@@ -161,6 +161,7 @@
     <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.8/firebase-storage.js"></script>
     <!--firebase-app - The core firebase client (required).
     firebase-auth - Firebase Authentication (optional).
     firebase-database - The Firebase Realtime Database (optional).
@@ -178,6 +179,7 @@
         if (typeof firebase !== 'undefined') {
             firebase.initializeApp(config);
             var database = firebase.database();
+            var storage = firebase.storage().ref();
         }
     </script>
     <script type="text/javascript" src="../js/config.js"></script>

@@ -1,21 +1,64 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-list/iron-list.html">
 
 <dom-module id="sheep-main">
     <template>
         <style>
-            :host {
+             :host {
                 display: block;
-
                 padding: 10px;
+            }
+            
+            #files-input {
+                display: none;
+            }
+            
+            #files-button {
+                background-color: var(--app-theme-color);
+                padding: 0.5em 0.8em 0.5em 0.8em;
+                cursor: pointer;
             }
         </style>
 
         <h1>Website in progresss</h1>
+        <input id="files-input" on-change="change" label="Upload images" type="file" name="files[]" multiple="" accept=".jpg,.jpeg,.png,.gif,.apng,.tiff,.tif,.bmp,.pdf,.xcf,.webp"
+            multiple>
+        </input>
+        <label id="files-button" for="files-input">klek me</label>
+        <iron-list items="[[files]]" as="item">
+            <template>
+                <h1>[[item.name]]</h1>
+            </template>
+        </iron-list>
     </template>
 
     <script>
         Polymer({
-            is: 'sheep-main'
+            is: 'sheep-main',
+
+            properties: {
+                user: {
+                    type: Object,
+                    notify: true
+                },
+                files: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                }
+            },
+
+            change: function (e) {
+                if (this.user === undefined || this.user === null) return;
+                for (var i = 0; i < e.path[0].files.length; i++) {
+                    console.log(e.path[0].files[i].name);
+                    this.push("files", e.path[0].files[i]);
+                    // storage.child(this.user.uid).child(e.path[0].files[i].name).put(e.path[0].files[i]).then(function(snapshot) {
+                    //     console.log('Uploaded File! ' + e.path[0].files[i].name)
+                    // });
+                }
+                console.log(this.files);
+            }
         });
     </script>
 </dom-module>
