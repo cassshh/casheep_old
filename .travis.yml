@@ -1,0 +1,23 @@
+language: node_js
+sudo: required
+dist: trusty
+addons:
+  firefox: latest
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+node_js:
+  - '6'
+before_script:
+  - npm install -g bower polymer-cli firebase-tools
+  - bower install
+script:
+  - xvfb-run npm test
+  - polymer build --bundle --js-minify --css-minify --html-minify
+after_success:
+  - chmod +x deploy.sh
+  - ./deploy.sh casheep-develop
+notifications:
+  email: false
