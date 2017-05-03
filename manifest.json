@@ -1,0 +1,7 @@
+{
+  "name": "casheep",
+  "short_name": "casheep",
+  "description": "Casheep Progressive Web App",
+  "start_url": "/",
+  "display": "standalone"
+}
