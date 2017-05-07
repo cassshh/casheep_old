@@ -18,6 +18,6 @@ script:
   - polymer build --bundle --js-minify --css-minify --html-minify
 after_success:
   - chmod +x deploy.sh
-  - ./deploy.sh casheep-develop
+  - ./deploy.sh
 notifications:
   email: false
