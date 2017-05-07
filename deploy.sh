@@ -1,24 +1,31 @@
 #!/bin/bash
-echo "Executing deploy script..."
-if [ -z "$1" ]; then
-    echo "No alias/project id supplied as argument..."
-    echo "Exiting."
-    exit 1
-fi
-echo "Branch: $TRAVIS_BRANCH"
-if [ $TRAVIS_BRANCH == "master" ]; then
-    echo "Branch is master..."
+deploy () {
+    echo "Initiate deployment on $1 environment"
+    firebase use "$1" --token "${FIREBASE_API_TOKEN}"
+    firebase deploy --token "${FIREBASE_API_TOKEN}"
+}
+
+check_on_pr () {
     echo "Checking on PR..."
     echo "Pull Request: $TRAVIS_PULL_REQUEST"
     if [ $TRAVIS_PULL_REQUEST == false ]; then
-        echo "Initiate deployment :)"
-        firebase use $1 --token "${FIREBASE_API_TOKEN}"
-        firebase deploy --token "${FIREBASE_API_TOKEN}"
+        deploy "$1"
     else
         echo "Is a pull request..."
         echo "Not deploying."
     fi
+}
+
+echo "Executing deploy script..."
+echo "Branch: $TRAVIS_BRANCH"
+
+if [ $TRAVIS_BRANCH == "master" ]; then
+    echo "Branch is master..."
+    check_on_pr "${FIREBASE_PROJECT_ID_PROD}"
+elif [ $TRAVIS_BRANCH == "develop" ]; then
+    echo "Branch is develop..."
+    check_on_pr "${FIREBASE_PROJECT_ID_DEV}"
 else
-    echo "Not master branch..."
+    echo "Not develop branch or master..."
     echo "Not deploying."
 fi
